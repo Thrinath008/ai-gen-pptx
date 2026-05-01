@@ -1,0 +1,16 @@
+# Phase 1 — Brain
+langgraph>=0.2.0
+langchain-core>=0.3.0
+openai>=1.40.0
+pydantic>=2.7.0
+python-dotenv>=1.0.0
+
+# Phase 3 — Compiler
+python-pptx>=0.6.23
+Pillow>=10.4.0
+requests>=2.32.0
+lxml>=5.2.0
+
+# Font subsetting (optional — used for enterprise font embedding)
+fonttools>=4.53.0
+brotli>=1.1.0

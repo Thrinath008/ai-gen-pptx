@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>three_column_grid</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--bg-color, #F8FAFC);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; flex-direction: column;
+    }
+    .header {
+      height: 140px; background: var(--primary-color, #0F172A);
+      display: flex; align-items: center; padding: 0 80px; position: relative; z-index: 10;
+    }
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Montserrat', sans-serif);
+      font-size: 48px; font-weight: 800; color: #FFFFFF;
+    }
+    .grid-container {
+      flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px;
+      padding: 60px 80px; position: relative; z-index: 10;
+    }
+    .grid-card {
+      background: #FFFFFF; padding: 40px; border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      border-top: 8px solid var(--accent-color, #10B981);
+      display: flex; flex-direction: column; gap: 15px;
+    }
+    .card-title {
+      font-size: 24px; font-weight: 700; color: #1E293B;
+    }
+    .card-text {
+      font-size: 18px; color: #475569; line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <div data-pptx-role="background-shape" id="bg-shape" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:0;"></div>
+
+  <div class="header" data-pptx-role="decorative-bar" id="header-bg">
+    <h1 data-pptx-role="headline" id="slide-headline"></h1>
+  </div>
+
+  <div class="grid-container" id="grid-list"></div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {};
+    var root = document.getElementById('slide-root');
+    var bg   = document.getElementById('bg-shape');
+    var hb   = document.getElementById('header-bg');
+
+    if (gs) {
+      if (gs.primary_color) {
+        root.style.setProperty('--primary-color', gs.primary_color);
+        if (hb) hb.style.backgroundColor = gs.primary_color;
+      }
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) {
+        root.style.setProperty('--bg-color', gs.background_color);
+        if (bg) bg.style.backgroundColor = gs.background_color;
+      }
+    }
+
+    document.getElementById('slide-headline').textContent = c.headline || '';
+
+    var items = c.bullet_points || [];
+    var container = document.getElementById('grid-list');
+    if (container && items.length) {
+      container.innerHTML = '';
+      items.slice(0, 3).forEach(function(text, i) {
+        var card = document.createElement('div');
+        card.className = 'grid-card';
+        card.setAttribute('data-pptx-role', 'bullet');
+        card.innerHTML = '<div class="card-title">Point ' + (i+1) + '</div>' +
+                         '<div class="card-text">' + text + '</div>';
+        container.appendChild(card);
+      });
+    }
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

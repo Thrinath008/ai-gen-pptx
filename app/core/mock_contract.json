@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "title": "Corporate Overview",
+    "subtitle": "Future of Innovation",
+    "author": "Antigravity AI",
+    "company": "DeepMind",
+    "aspect_ratio": "16:9"
+  },
+  "global_styles": {
+    "primary_color": "#0F2D5E",
+    "accent_color": "#E8514A",
+    "background_color": "#FFFFFF",
+    "font_family": "Inter",
+    "heading_font": "Playfair Display",
+    "base_font_size": 16
+  },
+  "slides": [
+    {
+      "slide_id": "8d3e2a9b-0c1d-4e5f-8f7a-9b0c1d2e3f4a",
+      "template_key": "two_col_image_right",
+      "speaker_notes": "Welcome everyone to our corporate overview presentation.",
+      "content": {
+        "headline": "Pioneering the Next Frontier of AI",
+        "subheadline": "Leading the world in agentic coding and automation.",
+        "body_text": "We are building the tools that will redefine how software is created. Our pipeline leverages multi-agent collaboration to deliver production-grade results in seconds.",
+        "bullet_points": [
+          "Seamless OpenXML compilation",
+          "Headless DOM layout engine",
+          "Advanced LangGraph reasoning",
+          "Cloud-scale asset generation"
+        ]
+      },
+      "visuals": {
+        "image_url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1280&h=720&auto=format&fit=crop",
+        "morph_id": "hero_slide"
+      },
+      "transition": "morph"
+    }
+  ]
+}

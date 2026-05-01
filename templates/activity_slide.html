@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>activity_slide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--bg-color, #FFFBEB);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .activity-card {
+      width: 1000px; padding: 80px; background: #FFFFFF; border-radius: 40px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 4px dashed var(--accent-color, #F59E0B);
+      text-align: center; position: relative; z-index: 10;
+    }
+    .icon-box {
+      width: 100px; height: 100px; background: var(--accent-color, #F59E0B);
+      border-radius: 20px; margin: 0 auto 40px auto; display: flex;
+      align-items: center; justify-content: center; font-size: 50px;
+    }
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Montserrat', sans-serif);
+      font-size: 56px; font-weight: 800; color: #1E293B; margin-bottom: 30px;
+    }
+    [data-pptx-role="body"] {
+      font-size: 32px; line-height: 1.5; color: #475569; font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <div data-pptx-role="background-shape" id="bg-shape" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:0;"></div>
+
+  <div class="activity-card">
+    <div class="icon-box">✏️</div>
+    <h1 data-pptx-role="headline" id="slide-headline">Activity</h1>
+    <p data-pptx-role="body" id="slide-body"></p>
+  </div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {};
+    var root = document.getElementById('slide-root');
+    var bg   = document.getElementById('bg-shape');
+
+    if (gs) {
+      if (gs.primary_color)    root.style.setProperty('--primary-color', gs.primary_color);
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) {
+        root.style.setProperty('--bg-color', gs.background_color);
+        if (bg) bg.style.backgroundColor = gs.background_color;
+      }
+    }
+
+    document.getElementById('slide-headline').textContent = c.headline || 'Hands-On Activity';
+    document.getElementById('slide-body').textContent = c.activity_prompt || c.body_text || '';
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Executive Brief</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-deep:    #0D0F14;
+      --bg-panel:   #13161E;
+      --gold:       #C9A84C;
+      --gold-light: #E4C97A;
+      --white:      #F4F0E8;
+      --muted:      #7A7D8A;
+      --divider:    #2A2D38;
+    }
+
+    html, body {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      background: var(--bg-deep);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--white);
+    }
+
+    /* ── Ambient texture ── */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 50%, rgba(201,168,76,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 80% at 10% 20%, rgba(255,255,255,0.02) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* ── Gold accent bar (left edge) ── */
+    .accent-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 6px;
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 55%, transparent 100%);
+    }
+
+    /* ── Top micro-rule ── */
+    .top-rule {
+      position: absolute;
+      top: 52px; left: 78px; right: 78px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--divider) 60%, transparent 100%);
+    }
+
+    /* ── Corner logo / brand mark ── */
+    .brand-mark {
+      position: absolute;
+      top: 22px; left: 78px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── Slide number ── */
+    .slide-number {
+      position: absolute;
+      top: 22px; right: 78px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    /* ── Main content area ── */
+    .content-wrapper {
+      position: absolute;
+      top: 80px; left: 78px; right: 78px; bottom: 78px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+    }
+
+    /* ── Eyebrow label ── */
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.30em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    /* ── Headline ── */
+    [data-pptx-role="headline"] {
+      font-family: 'Playfair Display', serif;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.12;
+      color: var(--white);
+      max-width: 680px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Horizontal separator ── */
+    .content-divider {
+      width: 48px;
+      height: 2px;
+      background: var(--gold);
+      margin: 32px 0;
+    }
+
+    /* ── Body text ── */
+    [data-pptx-role="body"] {
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: rgba(244,240,232,0.72);
+      max-width: 600px;
+    }
+
+    /* ── Bullet list ── */
+    .bullets-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    [data-pptx-role="bullet"] {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: rgba(244,240,232,0.80);
+    }
+
+    [data-pptx-role="bullet"]::before {
+      content: '';
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-top: 8px;
+    }
+
+    /* ── Right-side decorative panel ── */
+    .side-panel {
+      position: absolute;
+      top: 80px; right: 0;
+      width: 380px; bottom: 0;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--divider);
+      overflow: hidden;
+    }
+
+    .side-panel::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      border: 1px solid var(--divider);
+    }
+
+    .side-panel::after {
+      content: '';
+      position: absolute;
+      top: -20px; right: -20px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.18);
+    }
+
+    /* ── Image placeholder inside side panel ── */
+    [data-pptx-role="image-placeholder"] {
+      position: absolute;
+      inset: 40px;
+      border: 1px solid var(--divider);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* ── Decorative shapes ── */
+    [data-pptx-role="decorative-bar"] {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+    }
+
+    [data-pptx-role="accent-shape"] {
+      position: absolute;
+      bottom: 40px; right: 440px;
+      width: 120px; height: 1px;
+      background: var(--divider);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Structural chrome -->
+  <div class="accent-bar" data-pptx-role="accent-shape"></div>
+  <div class="top-rule"></div>
+  <div class="brand-mark" id="brand-text">Executive Brief</div>
+  <div class="slide-number" id="slide-num">01</div>
+
+  <!-- Right decorative panel -->
+  <div class="side-panel">
+    <div data-pptx-role="image-placeholder" id="side-image">Visual</div>
+  </div>
+
+  <!-- Main content -->
+  <div class="content-wrapper">
+    <div class="eyebrow" id="eyebrow-label">Strategic Overview</div>
+
+    <h1 data-pptx-role="headline" id="headline-el">
+      Driving Growth Through Focused Execution
+    </h1>
+
+    <div class="content-divider"></div>
+
+    <p data-pptx-role="body" id="body-el">
+      A concise executive summary goes here. Keep it to two or three
+      impactful sentences that frame the key message for leadership.
+    </p>
+
+    <div class="bullets-wrapper" id="bullets-container">
+      <div data-pptx-role="bullet">Revenue target exceeded by 18% in Q3</div>
+      <div data-pptx-role="bullet">Operational costs reduced across all divisions</div>
+      <div data-pptx-role="bullet">Next phase launches in 90 days</div>
+    </div>
+  </div>
+
+  <!-- Bottom accent -->
+  <div data-pptx-role="decorative-bar"></div>
+
+  <script>
+    window.__RENDER_SLIDE__ = function(slide, gs) {
+      var c = slide.content || {}, v = slide.visuals || {};
+      var root = document.body;
+
+      // Apply brand colours
+      if (gs) {
+        if (gs.accent_color) document.documentElement.style.setProperty('--gold', gs.accent_color);
+        if (gs.accent_color) document.documentElement.style.setProperty('--gold-light', gs.accent_color);
+      }
+
+      var h = document.getElementById('headline-el');
+      if (h && c.headline) h.textContent = c.headline;
+
+      var b = document.getElementById('body-el');
+      if (b) b.textContent = c.body_text || '';
+
+      var ey = document.getElementById('eyebrow-label');
+      if (ey) ey.textContent = c.eyebrow || c.section || 'Strategic Overview';
+
+      // Bullet list from bullet_points
+      if (Array.isArray(c.bullet_points) && c.bullet_points.length) {
+        var container = document.getElementById('bullets-container');
+        container.innerHTML = '';
+        c.bullet_points.forEach(function(text, i) {
+          var el = document.createElement('div');
+          el.setAttribute('data-pptx-role', 'bullet');
+          el.setAttribute('data-element-id', 'bullet-' + i);
+          el.textContent = text;
+          container.appendChild(el);
+        });
+      }
+
+      // Image from visuals.image_url
+      if (v.image_url) {
+        var img = document.createElement('img');
+        img.src = v.image_url;
+        img.setAttribute('data-pptx-role', 'image-placeholder');
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:4px;';
+        var ph = document.getElementById('side-image');
+        if (ph) { ph.innerHTML = ''; ph.appendChild(img); }
+      }
+    };
+  </script>
+</body>
+</html>

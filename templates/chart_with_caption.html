@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>chart_with_caption</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--bg-color, #FFFFFF);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; flex-direction: column;
+    }
+
+    .header-bar { height: 8px; background: var(--primary-color, #0F2D5E); flex-shrink: 0; }
+
+    .top-row {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding: 32px 64px 24px 64px; flex-shrink: 0;
+    }
+
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 36px; font-weight: 700; color: var(--primary-color, #0F2D5E);
+      line-height: 1.15; letter-spacing: -0.01em;
+    }
+
+    .slide-source {
+      font-size: 12px; color: #A0AEC0; font-style: italic;
+    }
+
+    /* Chart + caption layout */
+    .main-row {
+      flex: 1; display: flex; gap: 40px; padding: 0 64px 32px 64px;
+    }
+
+    /* Simulated bar chart */
+    .chart-area {
+      flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+      gap: 0;
+    }
+
+    .chart-title {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #718096; margin-bottom: 16px;
+    }
+
+    .bars-wrapper {
+      flex: 1; display: flex; align-items: flex-end; gap: 20px;
+      border-bottom: 2px solid #E2E8F0; padding-bottom: 0;
+      position: relative; min-height: 300px;
+    }
+
+    /* Horizontal grid lines */
+    .bars-wrapper::before {
+      content: ''; position: absolute;
+      left: 0; right: 0; top: 25%; height: 1px; background: #F0F0F0;
+    }
+    .bars-wrapper::after {
+      content: ''; position: absolute;
+      left: 0; right: 0; top: 50%; height: 1px; background: #F0F0F0;
+    }
+
+    .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+    [data-pptx-role="bullet"] {
+      /* Reusing "bullet" role for bar labels — compiler maps to text box */
+      font-size: 13px; font-weight: 500; color: #4A5568; text-align: center;
+    }
+
+    .bar {
+      width: 100%; border-radius: 4px 4px 0 0;
+      background: var(--primary-color, #0F2D5E);
+      transition: height 0.3s;
+    }
+
+    .bar:nth-child(1) { background: var(--accent-color, #E8514A); }
+    .bar:nth-child(2) { background: var(--primary-color, #0F2D5E); opacity: 0.85; }
+    .bar:nth-child(3) { background: var(--primary-color, #0F2D5E); opacity: 0.70; }
+
+    /* Caption panel */
+    .caption-panel {
+      width: 300px; flex-shrink: 0;
+      background: #F7FAFC; border-radius: 8px;
+      padding: 28px 24px; display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .caption-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--accent-color, #E8514A);
+    }
+
+    [data-pptx-role="body"] {
+      font-size: 16px; line-height: 1.65; color: #4A5568;
+    }
+
+    [data-pptx-role="decorative-bar"] {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent-color, #E8514A) 0%, var(--primary-color, #0F2D5E) 100%);
+    }
+    [data-pptx-role="accent-shape"] {
+      width: 40px; height: 3px; background: var(--accent-color, #E8514A);
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <div class="header-bar"></div>
+
+  <div class="top-row">
+    <h1 data-pptx-role="headline" id="slide-headline"></h1>
+    <span class="slide-source" id="slide-source"></span>
+  </div>
+
+  <div class="main-row">
+    <div class="chart-area">
+      <div class="chart-title" id="chart-title-el">Data Overview</div>
+      <div class="bars-wrapper" id="bars-container">
+        <!-- bars injected dynamically -->
+      </div>
+    </div>
+
+    <div class="caption-panel">
+      <div class="caption-label">Key Insight</div>
+      <div data-pptx-role="accent-shape"></div>
+      <p data-pptx-role="body" id="slide-body"></p>
+    </div>
+  </div>
+
+  <div data-pptx-role="decorative-bar"></div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {}, v = slide.visuals || {};
+    var root = document.getElementById('slide-root');
+
+    if (gs) {
+      if (gs.primary_color)    root.style.setProperty('--primary-color', gs.primary_color);
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) root.style.setProperty('--bg-color',      gs.background_color);
+      if (gs.font_family)      root.style.setProperty('--font-body',     gs.font_family);
+      if (gs.heading_font)     root.style.setProperty('--font-heading',  gs.heading_font);
+    }
+
+    var h = document.getElementById('slide-headline');
+    if (h && c.headline) h.textContent = c.headline;
+
+    var b = document.getElementById('slide-body');
+    if (b) b.textContent = c.caption || c.body_text || '';
+
+    var src = document.getElementById('slide-source');
+    if (src) src.textContent = c.section || '';
+
+    // Build bars from chart_config or bullet_points as fallback
+    var container = document.getElementById('bars-container');
+    var chartData = null;
+    if (v.chart_config && Array.isArray(v.chart_config.data_series)) {
+      chartData = v.chart_config.data_series;
+      var ct = document.getElementById('chart-title-el');
+      if (ct) ct.textContent = v.chart_config.title || 'Data Overview';
+    }
+
+    if (chartData && chartData.length) {
+      container.innerHTML = '';
+      var maxVal = Math.max.apply(null, chartData.map(function(d) { return +d.value; }));
+      chartData.forEach(function(d, i) {
+        var group = document.createElement('div');
+        group.className = 'bar-group';
+
+        var bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = Math.round(((+d.value / maxVal) * 260)) + 'px';
+        if (d.color) bar.style.background = d.color;
+
+        var lbl = document.createElement('div');
+        lbl.setAttribute('data-pptx-role', 'bullet');
+        lbl.setAttribute('data-element-id', 'bar-' + i);
+        lbl.textContent = d.label + ': ' + d.value;
+
+        group.appendChild(bar);
+        group.appendChild(lbl);
+        container.appendChild(group);
+      });
+    } else if (Array.isArray(c.bullet_points) && c.bullet_points.length) {
+      // Fallback: render bullet_points as placeholder bars
+      container.innerHTML = '';
+      var n = c.bullet_points.length;
+      c.bullet_points.forEach(function(text, i) {
+        var group = document.createElement('div');
+        group.className = 'bar-group';
+
+        var bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = Math.round(100 + Math.random() * 160) + 'px';
+
+        var lbl = document.createElement('div');
+        lbl.setAttribute('data-pptx-role', 'bullet');
+        lbl.setAttribute('data-element-id', 'bar-' + i);
+        lbl.textContent = text;
+
+        group.appendChild(bar);
+        group.appendChild(lbl);
+        container.appendChild(group);
+      });
+    }
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>large_metric_hero</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--bg-color, #FAFAFA);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; align-items: center;
+    }
+
+    /* Left accent strip */
+    .accent-strip {
+      width: 8px; height: 100%;
+      background: linear-gradient(180deg, var(--accent-color, #E8514A) 0%, var(--primary-color, #0F2D5E) 100%);
+      flex-shrink: 0;
+    }
+
+    /* Left half: metric */
+    .metric-half {
+      width: 540px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 64px 56px;
+      border-right: 1px solid #E2E8F0;
+    }
+
+    .metric-label {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--accent-color, #E8514A);
+      margin-bottom: 16px;
+    }
+
+    [data-pptx-role="metric"] {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 108px; font-weight: 700; line-height: 1;
+      color: var(--primary-color, #0F2D5E); letter-spacing: -0.04em;
+    }
+
+    .metric-sublabel {
+      font-size: 18px; font-weight: 400; color: #718096;
+      margin-top: 12px; max-width: 320px; line-height: 1.5;
+    }
+
+    /* Right half: text */
+    .text-half {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; padding: 64px 56px; gap: 20px;
+    }
+
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 36px; font-weight: 700; line-height: 1.2;
+      color: var(--primary-color, #0F2D5E); letter-spacing: -0.01em;
+    }
+
+    .divider { width: 48px; height: 3px; background: var(--accent-color, #E8514A); border-radius: 2px; }
+
+    [data-pptx-role="body"] {
+      font-size: 17px; line-height: 1.65; color: #4A5568; font-weight: 400;
+    }
+
+    [data-pptx-role="bullet"] {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 15px; line-height: 1.5; color: #4A5568;
+    }
+    [data-pptx-role="bullet"]::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent-color, #E8514A); flex-shrink: 0; margin-top: 5px;
+    }
+
+    [data-pptx-role="decorative-bar"] {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent-color, #E8514A) 0%, var(--primary-color, #0F2D5E) 100%);
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <div class="accent-strip" data-pptx-role="accent-shape"></div>
+
+  <!-- Left: big KPI number -->
+  <div class="metric-half">
+    <div class="metric-label" id="metric-label-el"></div>
+    <div data-pptx-role="metric" id="metric-value-el"></div>
+    <div class="metric-sublabel" id="metric-sublabel-el"></div>
+  </div>
+
+  <!-- Right: headline + body + bullets -->
+  <div class="text-half">
+    <h1 data-pptx-role="headline" id="slide-headline"></h1>
+    <div class="divider" data-pptx-role="accent-shape"></div>
+    <p data-pptx-role="body" id="slide-body"></p>
+    <div id="slide-bullets" style="display:flex;flex-direction:column;gap:12px;"></div>
+  </div>
+
+  <div data-pptx-role="decorative-bar"></div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {};
+    var root = document.getElementById('slide-root');
+
+    if (gs) {
+      if (gs.primary_color)    root.style.setProperty('--primary-color', gs.primary_color);
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) root.style.setProperty('--bg-color',      gs.background_color);
+      if (gs.font_family)      root.style.setProperty('--font-body',     gs.font_family);
+      if (gs.heading_font)     root.style.setProperty('--font-heading',  gs.heading_font);
+    }
+
+    var h = document.getElementById('slide-headline');
+    if (h && c.headline) h.textContent = c.headline;
+
+    var mv = document.getElementById('metric-value-el');
+    if (mv) mv.textContent = c.metric_value || '';
+
+    var ml = document.getElementById('metric-label-el');
+    if (ml) ml.textContent = c.metric_label || '';
+
+    var msl = document.getElementById('metric-sublabel-el');
+    if (msl) msl.textContent = c.subheadline || '';
+
+    var b = document.getElementById('slide-body');
+    if (b) { b.textContent = c.body_text || ''; b.style.display = c.body_text ? 'block' : 'none'; }
+
+    var bl = document.getElementById('slide-bullets');
+    if (bl && Array.isArray(c.bullet_points) && c.bullet_points.length) {
+      bl.innerHTML = '';
+      c.bullet_points.forEach(function(text) {
+        var el = document.createElement('div');
+        el.setAttribute('data-pptx-role', 'bullet');
+        el.textContent = text;
+        bl.appendChild(el);
+      });
+    }
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>bullet_list</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--bg-color, #F8FAFC);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; flex-direction: column;
+    }
+    .header-section {
+      height: 180px; background: var(--primary-color, #0F172A);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 80px; position: relative; z-index: 10;
+    }
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Montserrat', sans-serif);
+      font-size: 52px; font-weight: 800; color: #FFFFFF; line-height: 1.1;
+    }
+    .accent-line {
+      width: 100px; height: 8px; background: var(--accent-color, #10B981);
+      margin-top: 15px; border-radius: 4px;
+    }
+    .content-area {
+      flex: 1; padding: 60px 80px; display: flex; flex-direction: column; gap: 30px;
+      position: relative; z-index: 10;
+    }
+    [data-pptx-role="body"] {
+      font-size: 26px; line-height: 1.5; color: #1E293B; font-weight: 500; margin-bottom: 10px;
+    }
+    .bullet-item {
+      display: flex; align-items: flex-start; gap: 20px; font-size: 22px;
+      color: #334155; line-height: 1.4; font-weight: 400;
+    }
+    .bullet-icon {
+      width: 12px; height: 12px; border-radius: 50%; background: var(--accent-color, #10B981);
+      margin-top: 10px; flex-shrink: 0;
+    }
+    .footer {
+      height: 60px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 80px; border-top: 1px solid #E2E8F0; font-size: 13px; font-weight: 700;
+      color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <div data-pptx-role="background-shape" id="bg-shape" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:0;"></div>
+
+  <div class="header-section" data-pptx-role="decorative-bar" id="header-bg">
+    <h1 data-pptx-role="headline" id="slide-headline"></h1>
+    <div class="accent-line" data-pptx-role="accent-shape"></div>
+  </div>
+
+  <div class="content-area">
+    <p data-pptx-role="body" id="slide-body"></p>
+    <div id="bullet-container" style="display:flex; flex-direction:column; gap:20px;"></div>
+  </div>
+
+  <div class="footer">
+    <div id="footer-school"></div>
+    <div id="footer-class"></div>
+  </div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {}, m = slide.metadata || {};
+    var root = document.getElementById('slide-root');
+    var bg   = document.getElementById('bg-shape');
+    var hb   = document.getElementById('header-bg');
+
+    if (gs) {
+      if (gs.primary_color) {
+        root.style.setProperty('--primary-color', gs.primary_color);
+        if (hb) hb.style.backgroundColor = gs.primary_color;
+      }
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) {
+        root.style.setProperty('--bg-color', gs.background_color);
+        if (bg) bg.style.backgroundColor = gs.background_color;
+      }
+    }
+
+    document.getElementById('slide-headline').textContent = c.headline || '';
+    
+    var body = document.getElementById('slide-body');
+    if (body) {
+      body.textContent = c.body_text || '';
+      body.style.display = c.body_text ? 'block' : 'none';
+    }
+
+    var bc = document.getElementById('bullet-container');
+    if (bc && Array.isArray(c.bullet_points)) {
+      bc.innerHTML = '';
+      c.bullet_points.forEach(function(text) {
+        var item = document.createElement('div');
+        item.className = 'bullet-item';
+        item.setAttribute('data-pptx-role', 'bullet');
+        item.innerHTML = '<div class="bullet-icon"></div><span>' + text + '</span>';
+        bc.appendChild(item);
+      });
+    }
+
+    document.getElementById('footer-school').textContent = m.school || '';
+    document.getElementById('footer-class').textContent = m.class_name || '';
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>section_divider</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      background: #0F2D5E;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Diagonal accent band */
+    .diagonal-band {
+      position: absolute; inset: 0; overflow: hidden;
+    }
+    .diagonal-band::before {
+      content: ''; position: absolute;
+      width: 800px; height: 800px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%; right: -200px; top: -300px;
+    }
+    .diagonal-band::after {
+      content: ''; position: absolute;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 50%; left: -100px; bottom: -200px;
+    }
+
+    /* Left accent bar */
+    [data-pptx-role="accent-shape"] {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 8px;
+      background: var(--accent-color, #E8514A);
+    }
+
+    .content {
+      position: relative; z-index: 2; text-align: center;
+      max-width: 800px; padding: 0 80px;
+    }
+
+    .section-number {
+      font-size: 13px; font-weight: 600; letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4); margin-bottom: 32px;
+    }
+
+    .divider-line {
+      width: 80px; height: 2px;
+      background: var(--accent-color, #E8514A);
+      margin: 0 auto 32px auto;
+    }
+
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 56px; font-weight: 700; line-height: 1.1;
+      color: #FFFFFF; letter-spacing: -0.02em; margin-bottom: 24px;
+    }
+
+    [data-pptx-role="body"] {
+      font-size: 18px; line-height: 1.7;
+      color: rgba(255,255,255,0.65); font-weight: 300;
+    }
+
+    [data-pptx-role="decorative-bar"] {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent-color, #E8514A) 0%, transparent 100%);
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <div class="diagonal-band"></div>
+  <div data-pptx-role="accent-shape"></div>
+
+  <div class="content">
+    <div class="section-number" id="section-number-el"></div>
+    <div class="divider-line"></div>
+    <h1 data-pptx-role="headline" id="slide-headline"></h1>
+    <p data-pptx-role="body" id="slide-body"></p>
+  </div>
+
+  <div data-pptx-role="decorative-bar"></div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {};
+    var root = document.getElementById('slide-root');
+
+    if (gs) {
+      if (gs.primary_color)    root.style.setProperty('--primary-color', gs.primary_color);
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.font_family)      root.style.setProperty('--font-body',     gs.font_family);
+      if (gs.heading_font)     root.style.setProperty('--font-heading',  gs.heading_font);
+    }
+
+    var h = document.getElementById('slide-headline');
+    if (h && c.headline) h.textContent = c.headline;
+
+    var b = document.getElementById('slide-body');
+    if (b) { b.textContent = c.body_text || c.subheadline || ''; b.style.display = (c.body_text || c.subheadline) ? 'block' : 'none'; }
+
+    var sn = document.getElementById('section-number-el');
+    if (sn) sn.textContent = c.eyebrow || c.section || '';
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

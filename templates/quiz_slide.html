@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>quiz_slide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--primary-color, #1A6B3A);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; flex-direction: column;
+    }
+    .quiz-header {
+      height: 120px; padding: 0 80px; display: flex; align-items: center; gap: 20px;
+      position: relative; z-index: 10;
+    }
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 38px; font-weight: 700; color: #FFFFFF;
+    }
+    .questions-area {
+      flex: 1; padding: 40px 80px; display: flex; flex-direction: column; gap: 30px;
+      justify-content: center; position: relative; z-index: 10;
+    }
+    .question-card {
+      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;
+      padding: 30px; display: flex; flex-direction: column; gap: 20px;
+    }
+    .question-text {
+      font-size: 24px; font-weight: 700; color: #FFFFFF;
+    }
+    .options-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+    }
+    .option-item {
+      background: rgba(255, 255, 255, 0.9); padding: 15px 20px; border-radius: 12px;
+      display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 600;
+      color: #1A6B3A;
+    }
+    .option-letter {
+      width: 30px; height: 30px; background: var(--accent-color, #2980B9);
+      color: #FFF; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 14px; flex-shrink: 0;
+    }
+    .correct {
+      background: #48C78E !important; color: #FFF !important;
+    }
+    .correct .option-letter {
+      background: #FFF !important; color: #48C78E !important;
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <!-- Solid Background for PPTX -->
+  <div data-pptx-role="background-shape" id="bg-shape" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:0;"></div>
+
+  <div class="quiz-header" data-pptx-role="decorative-bar" id="quiz-header">
+    <span style="font-size: 40px;">🏆</span>
+    <h1 data-pptx-role="headline" id="slide-headline">Quick Quiz</h1>
+  </div>
+
+  <div class="questions-area" id="questions-area"></div>
+
+  <div style="height: 10px; background: var(--accent-color, #2980B9);" data-pptx-role="decorative-bar"></div>
+</div>
+
+<script>
+  var LETTERS = ['A', 'B', 'C', 'D'];
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {};
+    var root = document.getElementById('slide-root');
+    var bg   = document.getElementById('bg-shape');
+    var qh   = document.getElementById('quiz-header');
+
+    if (gs) {
+      if (gs.primary_color) {
+        root.style.setProperty('--primary-color', gs.primary_color);
+        if (qh) qh.style.backgroundColor = gs.primary_color;
+      }
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) {
+        root.style.setProperty('--bg-color', gs.background_color);
+        if (bg) bg.style.backgroundColor = gs.primary_color; // Quizzes look better with primary dark bg
+      }
+    }
+
+    var qs = c.quiz_questions || [];
+    var area = document.getElementById('questions-area');
+    if (area && qs.length) {
+      area.innerHTML = '';
+      qs.slice(0, 2).forEach(function(q, qi) {
+        var card = document.createElement('div');
+        card.className = 'question-card';
+        card.innerHTML = '<div class="question-text" data-pptx-role="bullet">' + (qi+1) + '. ' + q.question + '</div>';
+        
+        var grid = document.createElement('div');
+        grid.className = 'options-grid';
+        if (q.options) {
+          q.options.forEach(function(opt, oi) {
+            var item = document.createElement('div');
+            item.className = 'option-item' + (oi === q.correct_index ? ' correct' : '');
+            item.setAttribute('data-pptx-role', 'bullet');
+            item.innerHTML = '<div class="option-letter">' + LETTERS[oi] + '</div> <span>' + opt + '</span>';
+            grid.appendChild(item);
+          });
+        }
+        card.appendChild(grid);
+        area.appendChild(card);
+      });
+    }
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

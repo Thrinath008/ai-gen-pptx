@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Data Insight</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #F7F6F2;
+      --bg-card:    #FFFFFF;
+      --ink:        #111318;
+      --ink-soft:   #4B4E5A;
+      --blue:       #1A56DB;
+      --blue-light: #EEF3FF;
+      --teal:       #0E9D8B;
+      --amber:      #D97706;
+      --border:     #E4E2DC;
+      --shadow:     rgba(17,19,24,0.07);
+    }
+
+    html, body {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'IBM Plex Sans', sans-serif;
+      color: var(--ink);
+    }
+
+    /* ── Top header band ── */
+    .header-band {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 72px;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      padding: 0 64px;
+      justify-content: space-between;
+    }
+
+    /* ── Section tag ── */
+    .section-tag {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── Headline in header ── */
+    [data-pptx-role="headline"] {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Slide counter ── */
+    .counter {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* ── Main layout grid ── */
+    .layout {
+      position: absolute;
+      top: 88px; left: 48px; right: 48px; bottom: 48px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+    }
+
+    /* ── KPI strip across top-left ── */
+    .kpi-strip {
+      grid-column: 1;
+      grid-row: 1;
+      display: flex;
+      gap: 16px;
+    }
+
+    .kpi-card {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 22px;
+      box-shadow: 0 2px 8px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .kpi-card:nth-child(1)::before { background: var(--blue); }
+    .kpi-card:nth-child(2)::before { background: var(--teal); }
+    .kpi-card:nth-child(3)::before { background: var(--amber); }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-delta {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .kpi-delta.up   { background: #ECFDF5; color: #059669; }
+    .kpi-delta.down { background: #FEF2F2; color: #DC2626; }
+
+    /* ── Body text card (bottom-left) ── */
+    .body-card {
+      grid-column: 1;
+      grid-row: 2;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px 32px;
+      box-shadow: 0 2px 8px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .body-card-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+
+    [data-pptx-role="body"] {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.72;
+      color: var(--ink-soft);
+    }
+
+    /* ── Right panel: bullets/insights ── */
+    .right-panel {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      background: var(--ink);
+      border-radius: 6px;
+      padding: 30px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .right-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .insights-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 24px;
+    }
+
+    .bullets-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      flex: 1;
+    }
+
+    [data-pptx-role="bullet"] {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.82);
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    [data-pptx-role="bullet"]:last-child { border-bottom: none; }
+
+    [data-pptx-role="bullet"]::before {
+      content: '→';
+      font-size: 12px;
+      color: var(--blue);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Accent shape & decorative bar ── */
+    [data-pptx-role="decorative-bar"] {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue) 0%, var(--teal) 50%, var(--amber) 100%);
+    }
+
+    [data-pptx-role="accent-shape"] {
+      position: absolute;
+      top: 72px; left: 0; right: 0;
+      height: 16px;
+      background: linear-gradient(180deg, rgba(17,19,24,0.08) 0%, transparent 100%);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top header -->
+  <div class="header-band">
+    <span class="section-tag" id="section-tag">Performance Report</span>
+    <h1 data-pptx-role="headline" id="headline-el">Q3 Business Results at a Glance</h1>
+    <span class="counter" id="slide-num">02 / 08</span>
+  </div>
+
+  <!-- Shadow under header -->
+  <div data-pptx-role="accent-shape"></div>
+
+  <!-- Main grid -->
+  <div class="layout">
+
+    <!-- KPI strip -->
+    <div class="kpi-strip" id="kpi-strip">
+
+      <div class="kpi-card" id="kpi-1">
+        <div class="kpi-label" id="kpi-1-label">Total Revenue</div>
+        <div class="kpi-value" id="kpi-1-value">$4.2M</div>
+        <span class="kpi-delta up" id="kpi-1-delta">▲ 18% YoY</span>
+      </div>
+
+      <div class="kpi-card" id="kpi-2">
+        <div class="kpi-label" id="kpi-2-label">New Customers</div>
+        <div class="kpi-value" id="kpi-2-value">1,340</div>
+        <span class="kpi-delta up" id="kpi-2-delta">▲ 9% QoQ</span>
+      </div>
+
+      <div class="kpi-card" id="kpi-3">
+        <div class="kpi-label" id="kpi-3-label">Churn Rate</div>
+        <div class="kpi-value" id="kpi-3-value">2.1%</div>
+        <span class="kpi-delta down" id="kpi-3-delta">▼ 0.4 pts</span>
+      </div>
+
+    </div>
+
+    <!-- Body / analysis text -->
+    <div class="body-card">
+      <div class="body-card-label">Key Takeaway</div>
+      <p data-pptx-role="body" id="body-el">
+        Strong revenue momentum driven by enterprise expansion in North America.
+        Product improvements contributed directly to churn reduction, while new
+        acquisition channels exceeded pipeline forecasts for the quarter.
+      </p>
+    </div>
+
+    <!-- Right panel: bullets -->
+    <div class="right-panel">
+      <div class="insights-label">Insights</div>
+      <div class="bullets-list" id="bullets-container">
+        <div data-pptx-role="bullet">Enterprise ACV up 31% from prior quarter</div>
+        <div data-pptx-role="bullet">APAC region now represents 22% of ARR</div>
+        <div data-pptx-role="bullet">Self-serve channel reduced CAC by $340</div>
+        <div data-pptx-role="bullet">NPS score reached all-time high of 68</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom color bar -->
+  <div data-pptx-role="decorative-bar"></div>
+
+  <script>
+    window.__RENDER_SLIDE__ = function(slide, gs) {
+      var c = slide.content || {}, v = slide.visuals || {};
+
+      if (gs && gs.accent_color) {
+        document.documentElement.style.setProperty('--blue', gs.accent_color);
+      }
+
+      var h = document.getElementById('headline-el');
+      if (h && c.headline) h.textContent = c.headline;
+
+      var b = document.getElementById('body-el');
+      if (b) b.textContent = c.body_text || '';
+
+      var st = document.getElementById('section-tag');
+      if (st) st.textContent = c.section || c.eyebrow || 'Performance Report';
+
+      /* KPIs — try c.kpis array first, fall back to metric fields */
+      if (Array.isArray(c.kpis) && c.kpis.length) {
+        c.kpis.forEach(function(kpi, i) {
+          var idx = i + 1;
+          var lEl = document.getElementById('kpi-' + idx + '-label');
+          var vEl = document.getElementById('kpi-' + idx + '-value');
+          var dEl = document.getElementById('kpi-' + idx + '-delta');
+          if (lEl && kpi.label) lEl.textContent = kpi.label;
+          if (vEl && kpi.value) vEl.textContent = kpi.value;
+          if (dEl && kpi.delta) {
+            dEl.textContent = kpi.delta;
+            dEl.className = 'kpi-delta ' + (kpi.trend === 'down' ? 'down' : 'up');
+          }
+        });
+      } else if (c.metric_value) {
+        /* Single metric fallback */
+        var vEl1 = document.getElementById('kpi-1-value');
+        var lEl1 = document.getElementById('kpi-1-label');
+        if (vEl1) vEl1.textContent = c.metric_value;
+        if (lEl1) lEl1.textContent = c.metric_label || 'Key Metric';
+      }
+
+      /* Bullets / insights from bullet_points */
+      if (Array.isArray(c.bullet_points) && c.bullet_points.length) {
+        var container = document.getElementById('bullets-container');
+        container.innerHTML = '';
+        c.bullet_points.forEach(function(text, i) {
+          var el = document.createElement('div');
+          el.setAttribute('data-pptx-role', 'bullet');
+          el.setAttribute('data-element-id', 'bullet-' + i);
+          el.textContent = text;
+          container.appendChild(el);
+        });
+      }
+    };
+  </script>
+</body>
+</html>

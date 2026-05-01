@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>learning_objectives</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--bg-color, #F8FAFC);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; flex-direction: column;
+    }
+    .header-band {
+      height: 140px; background: var(--primary-color, #1A6B3A); padding: 0 80px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: 10;
+    }
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 42px; font-weight: 700; color: #FFFFFF;
+    }
+    .class-badge {
+      background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+      padding: 10px 24px; border-radius: 40px; color: #FFF; font-weight: 700; font-size: 14px;
+    }
+    .content-area {
+      flex: 1; padding: 60px 100px; display: flex; flex-direction: column; gap: 20px;
+      position: relative; z-index: 10;
+    }
+    .label {
+      font-size: 14px; font-weight: 700; color: var(--accent-color, #2980B9);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .objective-item {
+      background: #FFFFFF; padding: 24px 32px; border-radius: 16px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      display: flex; align-items: center; gap: 20px;
+      font-size: 22px; font-weight: 600; color: #1E293B;
+    }
+    .check {
+      width: 32px; height: 32px; background: var(--primary-color, #1A6B3A);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #FFF; flex-shrink: 0; font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <!-- Solid Background -->
+  <div data-pptx-role="background-shape" id="bg-shape" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:0;"></div>
+
+  <!-- Header Band -->
+  <div class="header-band" data-pptx-role="decorative-bar" id="header-band">
+    <h1 data-pptx-role="headline" id="slide-headline">Learning Objectives</h1>
+    <div class="class-badge" id="class-badge"></div>
+  </div>
+
+  <div class="content-area">
+    <div class="label">By the end of this lesson:</div>
+    <div id="objectives-list" style="display:flex; flex-direction:column; gap:16px;"></div>
+  </div>
+
+  <div style="height: 10px; background: var(--accent-color, #2980B9);" data-pptx-role="decorative-bar"></div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {}, m = slide.metadata || {};
+    var root = document.getElementById('slide-root');
+    var bg   = document.getElementById('bg-shape');
+    var hb   = document.getElementById('header-band');
+
+    if (gs) {
+      if (gs.primary_color) {
+        root.style.setProperty('--primary-color', gs.primary_color);
+        if (hb) hb.style.backgroundColor = gs.primary_color;
+      }
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) {
+        root.style.setProperty('--bg-color', gs.background_color);
+        if (bg) bg.style.backgroundColor = gs.background_color;
+      }
+      if (gs.font_family)      root.style.setProperty('--font-body',    gs.font_family);
+      if (gs.heading_font)     root.style.setProperty('--font-heading', gs.heading_font);
+    }
+
+    document.getElementById('slide-headline').textContent = c.headline || 'Learning Objectives';
+    document.getElementById('class-badge').textContent = m.class_name || '';
+
+    var items = c.objectives || c.bullet_points || [];
+    var list = document.getElementById('objectives-list');
+    if (list && items.length) {
+      list.innerHTML = '';
+      items.forEach(function(text) {
+        var el = document.createElement('div');
+        el.className = 'objective-item';
+        el.setAttribute('data-pptx-role', 'bullet');
+        el.innerHTML = '<div class="check" style="background:var(--primary-color)">✓</div> <span>' + text + '</span>';
+        list.appendChild(el);
+      });
+    }
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>

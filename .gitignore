@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# System
+.DS_Store
+Thumbs.db
+
+# Project Specific
+outputs/
+*.pptx
+*.contract.json
+*.coords.json
+*.lesson_plan.md
+server.log
+temp/
+
+# Frontend builds
+frontend/dist/
+frontend/node_modules/

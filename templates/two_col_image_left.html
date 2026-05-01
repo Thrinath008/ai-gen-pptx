@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>two_col_image_left</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    #slide-root {
+      width: 1280px; height: 720px; overflow: hidden; position: relative;
+      background: var(--bg-color, #FFFFFF);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      display: flex; flex-direction: column;
+    }
+
+    .header-bar { height: 8px; background: var(--primary-color, #0F2D5E); flex-shrink: 0; }
+
+    .content-area {
+      flex: 1; display: flex; flex-direction: row;
+      padding: 48px 64px 40px 64px; gap: 56px; align-items: flex-start;
+    }
+
+    /* LEFT: Image */
+    .col-image { flex: 0 0 44%; display: flex; align-items: stretch; }
+    .image-placeholder {
+      width: 100%; min-height: 480px; border-radius: 12px;
+      background: linear-gradient(135deg, #CBD5E0 0%, #A0AEC0 100%);
+      object-fit: cover; display: block;
+    }
+
+    /* RIGHT: Text */
+    .col-text { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+    [data-pptx-role="headline"] {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 40px; font-weight: 700; color: var(--primary-color, #0F2D5E);
+      line-height: 1.15; letter-spacing: -0.02em;
+    }
+
+    .headline-underline {
+      width: 56px; height: 4px; background: var(--accent-color, #E8514A);
+      border-radius: 2px; flex-shrink: 0;
+    }
+
+    [data-pptx-role="body"] {
+      font-size: 17px; line-height: 1.65; color: #3D3D3D; font-weight: 400;
+    }
+
+    [data-pptx-role="bullet"] {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 16px; line-height: 1.5; color: #3D3D3D;
+    }
+    [data-pptx-role="bullet"]::before {
+      content: ''; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent-color, #E8514A); flex-shrink: 0; margin-top: 6px;
+    }
+
+    .footer {
+      height: 44px; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 64px;
+      border-top: 1px solid #E2E8F0; flex-shrink: 0;
+    }
+    .footer-brand { font-size: 12px; font-weight: 600; color: var(--primary-color, #0F2D5E); letter-spacing: 0.06em; text-transform: uppercase; }
+    .footer-page  { font-size: 12px; color: #718096; }
+
+    [data-pptx-role="decorative-bar"] {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+      background: var(--accent-color, #E8514A);
+    }
+  </style>
+</head>
+<body>
+<div id="slide-root">
+  <div class="header-bar"></div>
+
+  <div class="content-area">
+    <!-- LEFT: Image -->
+    <div class="col-image">
+      <img class="image-placeholder" data-pptx-role="image-placeholder"
+           id="slide-image" alt=""
+           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+    </div>
+
+    <!-- RIGHT: Text -->
+    <div class="col-text">
+      <h1 data-pptx-role="headline" id="slide-headline"></h1>
+      <div class="headline-underline" data-pptx-role="accent-shape"></div>
+      <p data-pptx-role="body" id="slide-body"></p>
+      <div id="slide-bullets" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer-brand" id="footer-brand"></span>
+    <span class="footer-page"  id="footer-page"></span>
+  </div>
+  <div data-pptx-role="decorative-bar"></div>
+</div>
+
+<script>
+  window.__RENDER_SLIDE__ = function(slide, gs) {
+    var c = slide.content || {}, v = slide.visuals || {};
+    var root = document.getElementById('slide-root');
+
+    if (gs) {
+      if (gs.primary_color)    root.style.setProperty('--primary-color', gs.primary_color);
+      if (gs.accent_color)     root.style.setProperty('--accent-color',  gs.accent_color);
+      if (gs.background_color) root.style.setProperty('--bg-color',      gs.background_color);
+      if (gs.font_family)      root.style.setProperty('--font-body',     gs.font_family);
+      if (gs.heading_font)     root.style.setProperty('--font-heading',  gs.heading_font);
+    }
+
+    var h = document.getElementById('slide-headline');
+    if (h && c.headline) h.textContent = c.headline;
+
+    var b = document.getElementById('slide-body');
+    if (b) { b.textContent = c.body_text || ''; b.style.display = c.body_text ? 'block' : 'none'; }
+
+    var bl = document.getElementById('slide-bullets');
+    if (bl && Array.isArray(c.bullet_points) && c.bullet_points.length) {
+      bl.innerHTML = '';
+      c.bullet_points.forEach(function(text, i) {
+        var el = document.createElement('div');
+        el.setAttribute('data-pptx-role', 'bullet');
+        el.setAttribute('data-element-id', 'bullet-' + i);
+        el.textContent = text;
+        bl.appendChild(el);
+      });
+    }
+
+    var img = document.getElementById('slide-image');
+    if (img && v.image_url) { img.src = v.image_url; img.dataset.imageSrc = v.image_url; }
+  };
+  if (window.__SLIDE_DATA__) window.__RENDER_SLIDE__(window.__SLIDE_DATA__, window.__GLOBAL_STYLES__);
+</script>
+</body>
+</html>
