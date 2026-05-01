@@ -234,7 +234,7 @@ def add_text_box(slide, element: dict) -> None:
     tf.clear()
 
     # Set paragraph
-    p  = tf.paragraphs[0]
+    p  = tf.paragraphs[0] if tf.paragraphs else tf.add_paragraph()
 
     # Apply alignment
     align_str = typo.get("text_align", "left")
