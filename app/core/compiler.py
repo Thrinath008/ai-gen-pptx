@@ -231,18 +231,21 @@ def add_text_box(slide, element: dict) -> None:
     txBox = slide.shapes.add_textbox(left, top, width, height)
     tf    = txBox.text_frame
     tf.word_wrap = True
-    tf.clear()
 
     # Set paragraph
-    p  = tf.paragraphs[0] if tf.paragraphs else tf.add_paragraph()
+    p  = tf.paragraphs[0]
+    p.text = text_content
 
     # Apply alignment
     align_str = typo.get("text_align", "left")
     p.alignment = TEXT_ALIGN_MAP.get(align_str, PP_ALIGN.LEFT)
 
     # Apply run formatting
-    run = p.add_run()
-    run.text = text_content
+    if p.runs:
+        run = p.runs[0]
+    else:
+        run = p.add_run()
+        run.text = text_content
 
     font = run.font
     font_size_pt = typo.get("font_size_pt", 16)
