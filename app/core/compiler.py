@@ -241,8 +241,11 @@ def add_text_box(slide, element: dict) -> None:
     p.alignment = TEXT_ALIGN_MAP.get(align_str, PP_ALIGN.LEFT)
 
     # Apply run formatting
-    run = p.runs[0] if p.runs else p.add_run()
-    run.text = text_content
+    if p.runs:
+        run = p.runs[0]
+    else:
+        run = p.add_run()
+        run.text = text_content
 
     font = run.font
     font_size_pt = typo.get("font_size_pt", 16)
